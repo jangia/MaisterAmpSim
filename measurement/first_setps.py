@@ -16,28 +16,6 @@ fs = 192000       # sampling rate, Hz, must be integer
 
 #
 
-import threading
-import time
-
-exitFlag = 0
-
-
-class myThread (threading.Thread):
-    def __init__(self, threadID, name, counter, filename):
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.name = name
-        self.counter = counter
-        self.filename = filename
-
-    def run(self):
-        print ("Starting " + self.name)
-        if self.threadID == 1:
-            play()
-        else:
-            record(self.filename)
-        print("Exiting " + self.name)
-
 
 def record(filename):
 
