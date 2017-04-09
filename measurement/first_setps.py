@@ -1,3 +1,5 @@
+import threading
+
 import sounddevice as sd
 import numpy as np
 import _thread
@@ -17,7 +19,7 @@ fs = 192000       # sampling rate, Hz, must be integer
 #
 
 
-def record(filename):
+def record(filename='test123.wav'):
 
     try:
         duration = 5.5  # seconds
@@ -35,24 +37,38 @@ def play():
     try:
         volume = 0.2  # range [0.0, 1.0]
         fs = 44100  # sampling rate, Hz, must be integer
-        duration = 3.0  # in seconds, may be float
+        duration = 5.0  # in seconds, may be float
         f = 440.0
 
-        samples = (np.sin(2 * np.pi * np.arange(fs * duration) * f / fs)).astype(np.float32)
+        samples = volume*(np.sin(2 * np.pi * np.arange(fs * duration) * f / fs)).astype(np.float32)
         sd.play(samples)
 
-        sd.wait()
+        # sd.wait()
     except Exception as e:
         print(e)
 # Create new threads
-thread1 = myThread(1, "Thread-1", 1, 'test.wav')
-thread2 = myThread(2, "Thread-2", 1, 'test.wav')
+# play()
+# threading.Thread(target=record).start()
+# threading.Thread(target=play).start()
+
+volume = 0.2  # range [0.0, 1.0]
+fs = 44100  # sampling rate, Hz, must be integer
+duration = 5.0  # in seconds, may be float
+f = 440.0
+
+samples = volume*(np.sin(2 * np.pi * np.arange(fs * duration) * f / fs)).astype(np.float32)
+
+myrecording = sd.playrec(samples)
+
+sd.wait()
+
+scipy.io.wavfile.write('test123.wav', fs, myrecording)
 
 # Start new Threads
-thread1.start()
-thread2.start()
-thread1.join()
-thread2.join()
+# thread1.start()
+# thread2.start()
+# thread1.join()
+# thread2.join()
 print("Exiting Main Thread")
 
 # def record(filename):

@@ -6,7 +6,7 @@ from measurement.generators import Generators
 
 class AudioDeviceManager:
 
-    def __init__(self, filepath, fs=44100, duration=10, channels=2, dtype='float64'):
+    def __init__(self, filepath, fs=44100, duration=5, channels=2, dtype='float64'):
         self.filepath = filepath
         self.fs = fs
         self.duration = duration
@@ -31,8 +31,8 @@ class AudioDeviceManager:
                 channels=self.channels,
                 dtype=self.dtype)
             print('Recording ...')
-            sd.wait()
 
+            # sd.wait()
             print('Writing to file: {0}'.format(self.filepath))
             scipy.io.wavfile.write(self.filepath, self.fs, myrecording)
 
@@ -48,5 +48,6 @@ class AudioDeviceManager:
             sd.play(samples)
 
             sd.wait()
+
         except Exception as e:
             print('Error trying to play: {0}'.format(e))

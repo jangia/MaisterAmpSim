@@ -1,51 +1,44 @@
 import os
-import threading
-import time
-import sounddevice as sd
-from measurement.audio_device_manager import *
+
+import sys
 
 from measurement.audio_device_manager import AudioDeviceManager
-from measurement.threads import AudioInterfaceThread
 from measurement.generators import Generators
+from measurement.threads import AudioInterfaceThread
 
-# init
+import sounddevice as sd
+
+args = sys.argv
+base_filename = args[1]
+amp = args[2]
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 rec_path = os.path.join(BASE_DIR, 'recordings')
 
-amps = [0.1*1.25**i for i in range(0, 21)]
+th_id = 0
 
-# main loop
-while 1:
-    base_filename = input("Write file name: ")
-    if base_filename:
+filepath = os.path.join(rec_path, base_filename + str(amp).replace('.', '_') + '.wav')
 
-        # for every amplitude
-        th_id = 0
+print('Your saved file will have name: {0}'.format(filepath))
 
-        for amp in amps:
+print('Measuring on amplitude: {0}'.format(amp))
+audio_device_manager = AudioDeviceManager(filepath, 44100, 5)
 
-            filepath = os.path.join(rec_path, base_filename + str(amp).replace('.', '_') + '.wav')
+generator = Generators(f0=0, f1=5000, t_end=5, fs=44100, volume=amp)
+rec_thread = AudioInterfaceThread(th_id, 'Thread-record', audio_device_manager, generator)
 
-            print('Your saved file will have name: {0}'.format(filepath))
+play_thread = AudioInterfaceThread(th_id, 'Thread-play', audio_device_manager, generator)
 
-            print('Measuring on amplitude: {0}'.format(amp))
-            audio_device_manager = AudioDeviceManager(filepath, 44100, 5)
 
-            generator = Generators(f0=0, f1=5000, t_end=5, fs=44100, volume=amp)
-            rec_thread = AudioInterfaceThread(th_id, 'Thread-record', audio_device_manager, generator)
-            th_id += 1
-            play_thread = AudioInterfaceThread(th_id, 'Thread-play', audio_device_manager, generator)
-            th_id += 1
+# threading.Thread(target=audio_device_manager.play).start()
+# threading.Thread(target=audio_device_manager.record).start()
 
-            # threading.Thread(target=audio_device_manager.play).start()
-            # threading.Thread(target=audio_device_manager.record).start()
+play_thread.start()
+rec_thread.start()
 
-            play_thread.start()
-            rec_thread.start()
-            #
-            play_thread.join(6)
-            rec_thread.join(6)
+play_thread.join()
+rec_thread.join()
 
-            print("Exiting Main Thread")
+print("Exiting Main Thread")
 
