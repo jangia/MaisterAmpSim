@@ -1,44 +1,52 @@
 import os
-
-import sys
-
-from measurement.audio_device_manager import AudioDeviceManager
-from measurement.generators import Generators
-from measurement.threads import AudioInterfaceThread
-
+import wavio
+from scipy import signal
+import numpy as np
 import sounddevice as sd
 
-args = sys.argv
-base_filename = args[1]
-amp = args[2]
 
+# set data
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REC_PATH = os.path.join(BASE_DIR, 'recordings')
+AMPS = [0.1*1.25**i for i in range(0, 21)]
+FS = 192000
+F0 = 10
+F1 = 300
+T_END = 5
+D_TYPE = 'float32'
 
-rec_path = os.path.join(BASE_DIR, 'recordings')
+# main
+base_filename = input("Write file name: ")
 
-th_id = 0
+if base_filename:
 
-filepath = os.path.join(rec_path, base_filename + str(amp).replace('.', '_') + '.wav')
+    # for every amplitude
 
-print('Your saved file will have name: {0}'.format(filepath))
+    for amp in AMPS:
 
-print('Measuring on amplitude: {0}'.format(amp))
-audio_device_manager = AudioDeviceManager(filepath, 44100, 5)
+        print('Measuring on amplitude: {0}'.format(amp))
 
-generator = Generators(f0=0, f1=5000, t_end=5, fs=44100, volume=amp)
-rec_thread = AudioInterfaceThread(th_id, 'Thread-record', audio_device_manager, generator)
-
-play_thread = AudioInterfaceThread(th_id, 'Thread-play', audio_device_manager, generator)
+        # set file path
+        filepath = os.path.join(REC_PATH, base_filename + str(amp).replace('.', '_') + '.wav')
 
 
-# threading.Thread(target=audio_device_manager.play).start()
-# threading.Thread(target=audio_device_manager.record).start()
+        # set signal
+        t = np.linspace(0, T_END, T_END*FS)
+        samples = signal.chirp(t, f0=F0, f1=F1, t1=T_END).astype(np.float32)
 
-play_thread.start()
-rec_thread.start()
 
-play_thread.join()
-rec_thread.join()
+        # recording
+        print('Recording ...')
+        my_recording = sd.playrec(samples, FS, channels=2, dtype=D_TYPE)
+        sd.wait()
+        print('Finish recording ...')
 
-print("Exiting Main Thread")
 
+        # write to file
+        print('Writing to file: {0}'.format(filepath))
+        wavio.write(filepath, my_recording, FS, sampwidth=1)
+
+        print('Script finished')
+
+else:
+    print('File name to short')
