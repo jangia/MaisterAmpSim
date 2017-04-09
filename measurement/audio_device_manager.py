@@ -1,6 +1,8 @@
 import scipy.io.wavfile
 import sounddevice as sd
 
+from measurement.generators import Generators
+
 
 class AudioDeviceManager:
 
@@ -37,9 +39,12 @@ class AudioDeviceManager:
         except Exception as e:
             print("Error: unable to record".format(e))
 
-    def play(self, samples):
+    def play(self, samples=''):
 
         try:
+            generator = Generators(f0=0, f1=5000, t_end=5, fs=44100, volume=0.2)
+
+            samples = generator.generate_sweep()
             sd.play(samples)
 
             sd.wait()

@@ -12,7 +12,7 @@ class Generators:
         self.fs = fs
         self.volume = volume
 
-    def generate_sine_wave(self, f, duration, volume=0.5, fs=44100):
+    def generate_sine_wave(self, f=440, duration=5, volume=0.5, fs=44100):
         """
         :param f: integer - frequency that you want to generate
         :param volume: float - between [0, 1]

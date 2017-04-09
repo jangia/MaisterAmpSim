@@ -1,6 +1,8 @@
 import os
+import threading
 import time
 import sounddevice as sd
+from measurement.audio_device_manager import *
 
 from measurement.audio_device_manager import AudioDeviceManager
 from measurement.threads import AudioInterfaceThread
@@ -30,18 +32,20 @@ while 1:
             print('Measuring on amplitude: {0}'.format(amp))
             audio_device_manager = AudioDeviceManager(filepath, 44100, 5)
 
-            generator = Generators(f0=0, f1=5000, t_end=10, fs=44100, volume=amp)
+            generator = Generators(f0=0, f1=5000, t_end=5, fs=44100, volume=amp)
             rec_thread = AudioInterfaceThread(th_id, 'Thread-record', audio_device_manager, generator)
             th_id += 1
             play_thread = AudioInterfaceThread(th_id, 'Thread-play', audio_device_manager, generator)
             th_id += 1
 
+            # threading.Thread(target=audio_device_manager.play).start()
+            # threading.Thread(target=audio_device_manager.record).start()
+
             play_thread.start()
             rec_thread.start()
-            play_thread.join()
-            rec_thread.join()
-
-            # time.sleep(5 + 1)
+            #
+            play_thread.join(6)
+            rec_thread.join(6)
 
             print("Exiting Main Thread")
 

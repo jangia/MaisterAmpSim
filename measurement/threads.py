@@ -19,14 +19,15 @@ class AudioInterfaceThread (threading.Thread):
     def run(self):
         print("Starting " + self.name)
         if self.name == 'Thread-play':
-            samples = self.generator.generate_sweep()
+            # samples = self.generator.generate_sweep()
+            samples = self.generator.generate_sine_wave()
 
             self.audio_device_manager.play(samples)
 
-        else:
+        elif self.name == 'Thread-record':
             self.audio_device_manager.record()
 
-        time.sleep(5)
+        # time.sleep(5)
 
         print("Exiting " + self.name)
 
