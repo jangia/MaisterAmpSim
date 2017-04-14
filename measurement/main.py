@@ -15,6 +15,8 @@ F1 = 300
 T_END = 5
 D_TYPE = 'float32'
 
+sd.default.device = 'Babyface Pro'
+
 # main
 base_filename = input("Write file name: ")
 
