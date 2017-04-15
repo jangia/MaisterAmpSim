@@ -8,11 +8,11 @@ import sounddevice as sd
 # set data
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REC_PATH = os.path.join(BASE_DIR, 'recordings')
-AMPS = [0.1*1.25**i for i in range(0, 21)]
-FS = 192000
+AMPS = [0.90**i for i in range(0, 26)]
+FS = 96000
 F0 = 10
-F1 = 300
-T_END = 5
+F1 = 2000
+T_END = 1
 D_TYPE = 'float32'
 
 sd.default.device = 'Babyface Pro'
@@ -31,10 +31,15 @@ if base_filename:
         # set file path
         filepath = os.path.join(REC_PATH, base_filename + str(amp).replace('.', '_') + '.wav')
 
+        samples = np.zeros(shape=(1))
 
         # set signal
-        t = np.linspace(0, T_END, T_END*FS)
-        samples = signal.chirp(t, f0=F0, f1=F1, t1=T_END).astype(np.float32)
+        for i in range(-30, 27):
+            f = 440 * (2 ** (1 / 12)) ** i
+            t = np.arange(FS * T_END)
+            sine_wave = np.sin(2 * np.pi * f * t / FS)
+
+            samples = np.concatenate([samples, sine_wave])
 
 
         # recording
