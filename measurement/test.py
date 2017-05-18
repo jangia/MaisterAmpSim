@@ -22,9 +22,9 @@ AMPS = [0.87**i for i in range(0, 21)]
 FS = 48000
 F0 = 10
 F1 = 2000
-T_END = 1.5
+T_END = 1
 D_TYPE = 'float32'
-amp = 0.5
+amp = 1
 sd.default.device = 'Babyface Pro'
 # print(sd.query_devices())
 # main
