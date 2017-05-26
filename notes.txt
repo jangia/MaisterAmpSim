@@ -1,1 +1,2 @@
 Low volume - zelo veliko šuma in offseta.
+Rabim 80000 vzorcev za FFT, imam zelo velik šum že iz ojačevalca, SNR okrog 60-70dB.
