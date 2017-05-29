@@ -14,7 +14,7 @@ def process_chunk(filename, frequency, chunk):
         "frequency": frequency,
         "amp": filename[5:-4].replace('_', '.'),
         "snr": str(snr(chunk)),
-        "fft":{}
+        "fft":[]
         }
     
     # calculate FFT
@@ -22,7 +22,7 @@ def process_chunk(filename, frequency, chunk):
     
     # add FFTs to db_entry
     for i in range(0, len(chunk_fft)):
-        db_entry['fft'][str(i)] = str(chunk_fft[i])
+        db_entry['fft'].append(str(chunk_fft[i]))
       
     # database  
     client = MongoClient()
@@ -38,7 +38,7 @@ def fft_to_db(wave, samples, frequency, amplitude):
     db_entry = {
         "frequency": str(frequency) + '',
         "amp": str(amplitude) + '',
-        "fft":{}
+        "fft":[]
         }
     
     # calculate FFT
@@ -46,7 +46,7 @@ def fft_to_db(wave, samples, frequency, amplitude):
     
     # add FFTs to db_entry
     for i in range(0, len(chunk_fft)):
-        db_entry['fft'][str(i)] = str(chunk_fft[i])
+        db_entry['fft'].append(str(chunk_fft[i]))
       
     # database  
     client = MongoClient()
