@@ -27,7 +27,7 @@ for amp in AMPS:
                 t = np.arange(FS * T_END)
                 sine_wave = amp * np.sin(2 * np.pi * f * t / FS)
                 
-                t = threading.Thread(target=fft_to_db, args = (sine_wave,80000, f, amp))
+                t = threading.Thread(target=fft_to_db, args = (sine_wave,80000, f, amp, 15000))
                 t.daemon = True
                 t.start()
     

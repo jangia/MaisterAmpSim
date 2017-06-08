@@ -26,7 +26,7 @@ for file in files:
     for frq, chunk in audio_chunks.items():
         # run proccessing
         
-        t = threading.Thread(target=process_chunk, args = (file,frq, chunk))
+        t = threading.Thread(target=process_chunk, args = (file,frq, chunk, 15000))
         t.daemon = True
         t.start()
     
